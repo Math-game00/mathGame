@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เกม คณิต คิด หรรษา</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: url("math.jpg") no-repeat center center/cover; /* ใช้ภาพพื้นหลังเหมือนใน Tkinter */
+    }
+    #game-container {
+      text-align: center;
+      background: #4de3e6;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      width: 90%;
+      max-width: 600px;
+    }
+    h1 {
+      color: #ff5396;
+    }
+    button {
+      font-size: 18px;
+      background-color: #ff5396;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #cf007f;
+    }
+    #question, #score, #timer {
+      margin: 20px 0;
+      font-size: 22px;
+      color: #333;
+    }
+    #answer {
+      font-size: 20px;
+      padding: 8px;
+      width: calc(100% - 40px);
+      max-width: 300px;
+      text-align: center;
+      margin: 0 auto;
+      display: block;
+      border-radius: 8px;
+      border: 2px solid #ff5396;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <h1>เกม คณิต คิด หรรษา</h1>
+    <button id="start-button">เริ่มเกม</button>
+    <div id="game" style="display: none;">
+      <div id="timer">เวลา: 1 นาที 30 วินาที</div>
+      <div id="question">คำถามจะแสดงที่นี่</div>
+      <input type="text" id="answer" placeholder="พิมพ์คำตอบของคุณ">
+      <button id="check-button">ตรวจสอบ</button>
+      <div id="score">คะแนน: 0</div>
+    </div>
+  </div>
+
+  <script>
+    let score = 0;
+    let totalQuestions = 10;
+    let numQuestions = 0;
+    let timeLeft = 90;
+    let answer = 0;
+    let timerInterval;
+
+    const startButton = document.getElementById('start-button');
+    const gameContainer = document.getElementById('game');
+    const timerDisplay = document.getElementById('timer');
+    const questionDisplay = document.getElementById('question');
+    const answerInput = document.getElementById('answer');
+    const checkButton = document.getElementById('check-button');
+    const scoreDisplay = document.getElementById('score');
+
+    function startGame() {
+      startButton.style.display = 'none';
+      gameContainer.style.display = 'block';
+      generateQuestion();
+      startTimer();
+    }
+
+    function generateQuestion() {
+      let num1 = Math.floor(Math.random() * 20) + 1;
+      let num2 = Math.floor(Math.random() * 20) + 1;
+      const operations = ['+', '-', '*', '/'];
+      const operation = operations[Math.floor(Math.random() * operations.length)];
+
+      if (operation === '/') {
+        while (num2 === 0) {
+          num2 = Math.floor(Math.random() * 20) + 1;
+        }
+        num1 = num1 * num2; // ทำให้หารลงตัว
+        answer = parseFloat((num1 / num2).toFixed(2));
+      } else if (operation === '+') {
+        answer = num1 + num2;
+      } else if (operation === '-') {
+        answer = num1 - num2;
+      } else if (operation === '*') {
+        answer = num1 * num2;
+      }
+
+      questionDisplay.textContent = `${num1} ${operation} ${num2} = ?`;
+      answerInput.value = '';
+      answerInput.focus();
+    }
+
+    function checkAnswer() {
+      const userAnswer = parseFloat(answerInput.value);
+
+      if (isNaN(userAnswer)) {
+        alert('โปรดป้อนตัวเลขเท่านั้น');
+        return;
+      }
+
+      if (Math.abs(userAnswer - answer) < 1e-5) {
+        score++;
+        alert('คำตอบถูกต้อง!');
+      } else {
+        alert(`คำตอบที่ถูกคือ ${answer}`);
+      }
+
+      numQuestions++;
+      scoreDisplay.textContent = `คะแนน: ${score}`;
+
+      if (numQuestions >= totalQuestions) {
+        endGame();
+      } else {
+        generateQuestion();
+      }
+    }
+
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        if (timeLeft > 0) {
+          const minutes = Math.floor(timeLeft / 60);
+          const seconds = timeLeft % 60;
+          timerDisplay.textContent = `เวลา: ${minutes} นาที ${seconds} วินาที`;
+          timeLeft--;
+        } else {
+          clearInterval(timerInterval);
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function endGame() {
+      clearInterval(timerInterval);
+      const feedback = score >= 7 ? "เก่งมาก!" : "พยายามอีกครั้ง!";
+      alert(`จบเกม!\nคะแนนของคุณคือ ${score}/${totalQuestions}\n${feedback}`);
+      window.location.href = "https://example.com";
+    }
+
+    startButton.addEventListener('click', startGame);
+    checkButton.addEventListener('click', checkAnswer);
+    answerInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') checkAnswer();
+    });
+  </script>
+</body>
+</html>
