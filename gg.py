@@ -10,13 +10,10 @@ class MathGameWithCustomBackground:
         self.root = root
         self.root.title("เกม คณิต คิด หรรษา")
         self.root.geometry("800x600")
+        self.root.config(bg="#eb9bae")  # สีชมพูอ่อน
         self.root.resizable(True, True)
-
-        # สีพื้นหลังระหว่างนับถอยหลัง
-        self.bg_color = "#FFAFE0"
-
-        # โหลดภาพพื้นหลังสำหรับเกม
-        self.start_bg_image = Image.open("เกม คณิต คิด หรรษา.jpg")  # ภาพเริ่มต้น
+        # ตั้งค่าเกม
+        self.start_bg_image = Image.open("math.jpg")  # ภาพเริ่มต้น
        
         self.start_bg_photo = None
         self.game_bg_photo = None
@@ -26,82 +23,23 @@ class MathGameWithCustomBackground:
         self.canvas.pack(fill="both", expand=True)
 
         # ใส่พื้นหลังภาพเริ่มต้น
-        self.start_bg_photo = ImageTk.PhotoImage(self.start_bg_image.resize((800, 600), Image.Resampling.LANCZOS))
+        self.start_bg_photo = ImageTk.PhotoImage(self.start_bg_image.resize((1600, 850), Image.Resampling.LANCZOS))
         self.bg_item = self.canvas.create_image(0, 0, anchor="nw", image=self.start_bg_photo)
 
-        # ปุ่มเริ่มเกม
-        self.start_button = tk.Button(
-            root,
-            text="เริ่มเกม",
-            font=("Comic Sans MS", 18, "bold"),
-            bg="#FF69B4",
-            fg="white",
-            command=self.start_countdown,
-        )
-        self.start_button.place(relx=0.5, rely=0.8, anchor="center")
-
-        self.root.bind("<Configure>", self.resize_background)
-
-    def resize_background(self, event):
-        """ปรับขนาดภาพพื้นหลังเมื่อหน้าต่างเปลี่ยนขนาด"""
-        new_width = self.root.winfo_width()
-        new_height = self.root.winfo_height()
-
-        if hasattr(self, "start_bg_photo") and self.start_bg_photo:
-            resized_image = self.start_bg_image.resize((new_width, new_height), Image.Resampling.LANCZOS)
-            self.start_bg_photo = ImageTk.PhotoImage(resized_image)
-            self.canvas.itemconfig(self.bg_item, image=self.start_bg_photo)
-
-    def start_countdown(self):
-        """เริ่มการนับถอยหลังก่อนเริ่มเกม"""
-        self.start_button.destroy()  # ลบปุ่มเริ่มเกม
-
-        # ตั้งค่าพื้นหลังสี
-        self.canvas.config(bg=self.bg_color)
-        self.canvas.delete("all")  # ลบภาพพื้นหลังเดิม
-
-        self.label = tk.Label(
-            self.root,
-            text="เตรียมพร้อม!",
-            font=("Comic Sans MS", 24, "bold"),
-            bg=self.bg_color,
-            fg="#FF1493",
-        )
-        self.label.place(relx=0.5, rely=0.5, anchor="center")
-        self.canvas.after(1000, lambda: self.update_countdown(3))
-
-    def update_countdown(self, count):
-        """อัปเดตตัวเลขนับถอยหลัง"""
-        if count > 0:
-            self.label.config(text=str(count))
-            self.canvas.after(1000, lambda: self.update_countdown(count - 1))
-        else:
-            self.label.destroy()
-            self.start_game()
-
-    def start_game(self):
-    # เปลี่ยนพื้นหลังเป็นภาพ math.jpg
-        self.canvas.delete("all")
-        self.bg_image = Image.open("math.jpg")
-        self.bg_image = self.bg_image.resize((self.root.winfo_width(), self.root.winfo_height()), Image.Resampling.LANCZOS)  # ปรับขนาดให้เต็มหน้าต่าง
-        self.bg_photo = ImageTk.PhotoImage(self.bg_image)
-        self.canvas.create_image(0, 0, anchor="nw", image=self.bg_photo)
-
-        self.game_frame = tk.Frame(self.root, bg="#7fd1d1", bd=10, relief="groove")
-        self.game_frame.place(relx=0.5, rely=0.5, anchor="center", width=400, height=500)
-
-        # ตั้งค่าเกม
         self.score = 0
         self.num_questions = 0
         self.total_questions = 10
         self.time_left = 90
 
         # UI ส่วนเกม
-       
+        self.game_frame = tk.Frame(self.root, bg="#7fd1d1", bd=10, relief="groove")
+        self.game_frame.place(relx=0.5, rely=0.5, anchor="center", width=400, height=500)
+
         self.question_label = tk.Label(
-            self.root, text="", font=("Comic Sans MS", 20, "bold"), bg="#7fd1d1", fg="#ff5396"
+            self.root, text="", font=("Comic Sans MS", 20, "bold"), bg="#ffffff", fg="#ff5396"
         )
-        self.question_label.place(relx=0.5, rely=0.3, anchor="center")
+        self.question_label.place(relx=0.5, rely=0.3
+, anchor="center")
 
         self.answer_entry = tk.Entry(self.root, font=("Comic Sans MS", 18), width=10)
         self.answer_entry.place(relx=0.5, rely=0.4, anchor="center")
